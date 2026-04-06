@@ -3,7 +3,7 @@ import os
 
 from config import ROOT_DIR
 from src.read_excel import read_excel_file
-from src.utils import get_greeting, get_cards, get_top_transactions
+from src.utils import get_greeting, get_cards, get_top_transactions, get_currency_rates, get_stock_prices
 
 
 def main_page(date_start:str):
@@ -12,10 +12,14 @@ def main_page(date_start:str):
     greeting = get_greeting()
     cards = get_cards(input_df)
     top_transactions = get_top_transactions(input_df)
+    currency_rates = get_currency_rates("USD", 79.05)
+    stock_prices = get_stock_prices("IBM")
     result = {
         "greeting": greeting,
         "cards": cards,
-        "top_transactions": top_transactions
+        "top_transactions": top_transactions,
+        "currency_rate": currency_rates,
+        "stock_prices": stock_prices
         }
     return result
 
