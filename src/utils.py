@@ -11,7 +11,7 @@ API_KEY_2 = os.getenv("API_KEY_ALPHAVANTAGE")
 
 
 
-def get_greeting():
+def get_greeting() -> str:
     """Приветствует пользователя в зависимости от времени суток"""
     day_time = datetime.now()
     hour = day_time.hour
@@ -40,6 +40,7 @@ def get_cards(df: pd.DataFrame) -> list[dict]:
 
 
 def get_top_transactions(df: pd.DataFrame) -> list[dict]:
+    """Принимает таблицу, возвращает транзакцию с указанием категорий и описанием"""
     data_sorted = df.sort_values(by="Сумма операции с округлением", ascending=False).head()
     result_sort = []
     for data, row in data_sorted.iterrows():
@@ -80,7 +81,7 @@ def get_stock_prices(
     stocks: list,
     api_key: str = API_KEY_2
 ) -> list | None:
-
+    """Возвращает стоимость запрошенных тикетов акций в рублях"""
     url = 'https://www.alphavantage.co/query'
     stock_list = []
     for stock in stocks:

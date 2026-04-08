@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import Optional
-
 import pandas as pd
 from pandas import DateOffset
 
 
 def spending_by_category(transactions: pd.DataFrame,category:str,
                         date: Optional[str] = None) -> pd.DataFrame:
+    """Принимает DataFrame, возвращает операции за последние 3 месяца в строковом виде"""
     if date is None:
         end_of_time = datetime.now()
     else:
