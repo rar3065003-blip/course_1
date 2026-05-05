@@ -1,9 +1,12 @@
 from datetime import datetime
+from json import JSONDecodeError
 from unittest.mock import patch
 
 import pandas
 from numpy import nan
+from requests import Timeout, RequestException
 
+from src.services import find_word
 from src.utils import get_greeting, get_cards, get_top_transactions, get_currency_rates, get_stock_prices, \
     data_time_range
 
@@ -51,37 +54,54 @@ def test_get_top_transactions(data_transactions: pandas.DataFrame) -> None:
                                                         'category': 'Переводы',
                                                         'date': '09.02.2018',
                                                         'description': 'Пополнение торгового счета'}]
+
+
 ### Проверить на 400
 ###linter
 ### docstring
-side effect
-decorators смотри страрую домашку
+# side effect
+# decorators смотри страрую домашку
 
 
-def test_get_currency_rates()->None:
+def test_get_currency_rates() -> None:
     with patch("requests.get") as mock_data:
         response = mock_data.return_value
         response.status_code = 200
         response.json.return_value = {"rates": {"1": 50.128}}
         assert get_currency_rates([]) == [{'currency': '1', 'rate': 50.13}]
+        response.status_code = 400
+        assert get_currency_rates([]) == []
+        response.status_code = 200
+        response.json.side_effect = JSONDecodeError("Error", " ", 67)
+        assert get_currency_rates([]) == []
 
 
-def test_get_stock_prices()->None:
-     with patch("requests.get") as mock_data:
-         response = mock_data.return_value
-         response.status_code = 200
-         response.json.return_value = {"Error Message": {"1": 50.128}}
-         assert get_stock_prices(['Temp']) is None
-         response.json.return_value = {"Note": "Thank you for using Alpha Vantage"}
-         assert get_stock_prices(['Temp']) is None
-         response.json.return_value = {"123": {}}
-         assert get_stock_prices(['Temp']) is None
-         response.json.return_value = {"Global Quote": {"05. price": 50.128}}
-         assert get_stock_prices(['Temp']) == [{"stock": "Temp", "price":50.13}]
-         response.status_code = 400
-         assert get_stock_prices(['Temp']) is None
+def test_get_stock_prices() -> None:
+    with patch("requests.get") as mock_data:
+        response = mock_data.return_value
+        response.status_code = 200
+        response.json.return_value = {"Error Message": {"1": 50.128}}
+        assert get_stock_prices(['Temp']) is None
+        response.json.return_value = {"Note": "Thank you for using Alpha Vantage"}
+        assert get_stock_prices(['Temp']) is None
+        response.json.return_value = {"123": {}}
+        assert get_stock_prices(['Temp']) is None
+        response.json.return_value = {"Global Quote": {"05. price": 50.128}}
+        assert get_stock_prices(['Temp']) == [{"stock": "Temp", "price": 50.13}]
+        response.status_code = 400
+        assert get_stock_prices(['Temp']) is None
+    with patch("requests.get", side_effect=JSONDecodeError("Error", " ", 67)) as mock_data:
+        assert get_stock_prices(['Temp']) is None
+    with patch("requests.get", side_effect=Timeout):
+        assert get_stock_prices(['Temp']) is None
+    with patch("requests.get", side_effect=RequestException):
+        assert get_stock_prices(['Temp']) is None
+    with patch("requests.get", side_effect=Exception):
+        assert get_stock_prices(['Temp']) is None
 
-def test_data_time_range()->None:
+
+def test_data_time_range() -> None:
     end_of_time = datetime(day=12, month=4, year=2026)
     start_of_time = datetime(day=1, month=4, year=2026)
     assert data_time_range("2026-04-12 00:00:00") == (start_of_time, end_of_time)
+

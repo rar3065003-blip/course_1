@@ -26,12 +26,12 @@ def log(filename: Optional[str] = "default.log") -> Callable:
             try:
                 result = func(*args, **kwargs)
             except Exception as w:
-                result = f"{func.__name__} raised with arguments {args, kwargs}\n but it didn`t worked, error:{str(w)} \n"
+                result = f"{func.__name__} raised with arguments {args, kwargs} but it didn`t worked, error:{str(w)}"
                 logger.info (result)
             finally:
                 logger.info(result)
                 with open(f"{ROOT_DIR}/data/{filename}", mode="a", encoding="utf-8") as x:
-                    x.write(result + "\n")
+                    x.write(str(result) + "\n")
             return result
         return wrapper
     return decorator
