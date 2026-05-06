@@ -82,7 +82,6 @@ def get_currency_rates(currency: list) -> list:
         try:
             logger.info(f"Ответ API получен")
             result: dict = response.json()
-            print(result)
             result_exch: dict = result.get("rates", {})
             for k, v in result_exch.items():
                 temp.append({

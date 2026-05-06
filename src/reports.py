@@ -39,7 +39,7 @@ def log(filename: Optional[str] = "default.log") -> Callable:
 @log()
 def spending_by_category(transactions: pd.DataFrame,category:str,
                         date: Optional[str] = None) -> pd.DataFrame:
-    """Принимает DataFrame, возвращает операции за последние 3 месяца в строковом виде"""
+    """Принимает DataFrame, возвращает операции за последние 3 месяца в DataFrame"""
     if date is None:
         end_of_time = datetime.now()
     else:

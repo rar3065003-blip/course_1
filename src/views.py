@@ -1,4 +1,5 @@
 "ПРинимает data и time"
+import json
 import os
 import logging
 from datetime import datetime
@@ -24,33 +25,31 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def main_page(date_start:str) -> dict:
+def main_page(date_start:str) -> str|None:
     """Выполнение вызова готовых функций поэтапно согласно заданию """
 
     try:
         logger.info('Начало выполнения функции')
         input_df = read_excel_file(os.path.join(ROOT_DIR, "data", "operations.xlsx"))
         start_of_time, end_of_time = data_time_range(date_start)
-        print(start_of_time, end_of_time)
         cards = get_cards(input_df)
-        #     word_finder = find_word(input_df, "переводы")
-        #     spend_money = spending_by_category(input_df, "переводы",  date = "01.12.2021 00:00:00")
-        #     print(spend_money)
-        #     user_currencies, user_stocks = read_user_settings(os.path.join(ROOT_DIR, "user_settings.json"))
-        #     print(user_currencies, user_stocks)
-        #     greeting = get_greeting()
-    #     top_transactions = get_top_transactions(input_df)
-    #     currency_rates = get_currency_rates(user_currencies)
-    #     stock_prices = get_stock_prices(user_stocks)
-    #     result = {
-    #         "greeting": greeting,
-    #         "cards": cards,
-    #         "top_transactions": top_transactions,
-    #         "currency_rate": currency_rates,
-    #         "stock_prices": stock_prices
-    #         }
-    #     return result
+        word_finder = find_word(input_df, "переводы")
+        spend_money = spending_by_category(input_df, "переводы",  date = "01.12.2021 00:00:00")
+        user_currencies, user_stocks = read_user_settings(os.path.join(ROOT_DIR, "user_settings.json"))
+        greeting = get_greeting()
+        top_transactions = get_top_transactions(input_df)
+        currency_rates = get_currency_rates(user_currencies)
+        stock_prices = get_stock_prices(user_stocks)
+        result = {
+            "greeting": greeting,
+            "cards": cards,
+            "top_transactions": top_transactions,
+            "currency_rate": currency_rates,
+            "stock_prices": stock_prices
+            }
+        return json.dumps(result, ensure_ascii=False, indent=4)
     except Exception as ex:
         logger.error(f"Ошибка выполнения: {ex}")
+        return None
 
 
