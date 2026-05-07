@@ -21,19 +21,21 @@ Course1
 ## Установка
 Инструкции по установке и настройке.
 Для работы вам потребуется установить:
-    Программу Python https://www.python.org/downloads/, не забываем поставить галочку "Add Python to PATH"
+
+#     Программу Python **версия 3.14.0** https://www.python.org/downloads/, не забываем поставить галочку "Add Python to PATH"
+
     Установить GIT https://git-scm.com/ 
-    Далее через командную строку win+R производим команды:
+    - через командную строку win+R производим команды:
          git clone https://github.com/rar3065003-blip/course_1
          cd название_папки_проекта
-
-
-    
-
-
-## Использование
-
-Примеры использования проекта.
+    - создаем виртуальное окружение
+        python -m venv venv
+    - активируем его
+        venv\Scripts\activate
+    -производим установки библиотек
+        pip install -r requirements.txt
+    - запуск приложения 
+        python main.py
 
 ## Авторы
 
