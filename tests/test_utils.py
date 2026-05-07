@@ -4,16 +4,14 @@ from unittest.mock import patch
 
 import pandas
 from numpy import nan
-from requests import Timeout, RequestException
-
-from src.services import find_word
+from requests import RequestException, Timeout
 from src.utils import (
-    get_greeting,
-    get_cards,
-    get_top_transactions,
-    get_currency_rates,
-    get_stock_prices,
     data_time_range,
+    get_cards,
+    get_currency_rates,
+    get_greeting,
+    get_stock_prices,
+    get_top_transactions,
 )
 
 
@@ -76,13 +74,6 @@ def test_get_top_transactions(data_transactions: pandas.DataFrame) -> None:
     ]
 
 
-### Проверить на 400
-###linter
-### docstring
-# side effect
-# decorators смотри страрую домашку
-
-
 def test_get_currency_rates() -> None:
     with patch("requests.get") as mock_data:
         response = mock_data.return_value
@@ -110,9 +101,7 @@ def test_get_stock_prices() -> None:
         assert get_stock_prices(["Temp"]) == [{"stock": "Temp", "price": 50.13}]
         response.status_code = 400
         assert get_stock_prices(["Temp"]) is None
-    with patch(
-        "requests.get", side_effect=JSONDecodeError("Error", " ", 67)
-    ) as mock_data:
+    with patch("requests.get", side_effect=JSONDecodeError("Error", " ", 67)) as mock_data:
         assert get_stock_prices(["Temp"]) is None
     with patch("requests.get", side_effect=Timeout):
         assert get_stock_prices(["Temp"]) is None

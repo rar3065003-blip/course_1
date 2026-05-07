@@ -24,3 +24,32 @@ test = [
     "pytest (>=9.0.3,<10.0.0)",
     "pytest-cov (>=7.1.0,<8.0.0)"
 ]
+
+[tool.black]
+line-length = 119
+exclude = '''
+(
+  /(
+      \.git
+
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+
+    | \.venv
+    | _build
+    | buck-out
+
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+line_length = 119
+
+[tool.mypy]
+disallow_untyped_defs = true
+warn_return_any = true
+exclude = "venv"

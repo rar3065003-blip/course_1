@@ -2,10 +2,11 @@ import datetime
 import logging
 import os
 from json import JSONDecodeError
+
 import pandas as pd
 import requests
-from requests import Response, Timeout, RequestException
 from dotenv import load_dotenv
+from requests import RequestException, Response, Timeout
 
 from config import ROOT_DIR
 
@@ -16,9 +17,7 @@ API_KEY_2 = os.getenv("API_KEY_ALPHAVANTAGE")
 logger = logging.getLogger("utils")
 logger.setLevel(logging.INFO)
 file_handler = logging.FileHandler(f"{ROOT_DIR}/logs/utils.log", encoding="utf-8")
-file_formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s: %(message)s"
-)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
@@ -63,9 +62,7 @@ def get_top_transactions(df: pd.DataFrame) -> list[dict]:
     """Принимает таблицу, возвращает транзакцию с указанием категорий и описанием"""
     logger.info("Начало выполнения функции")
 
-    data_sorted = df.sort_values(
-        by="Сумма операции с округлением", ascending=False
-    ).head()
+    data_sorted = df.sort_values(by="Сумма операции с округлением", ascending=False).head()
     result_sort = []
     for data, row in data_sorted.iterrows():
         result_sort.append(
@@ -90,7 +87,7 @@ def get_currency_rates(currency: list) -> list:
     status_code: int = response.status_code
     if status_code == 200:
         try:
-            logger.info(f"Ответ API получен")
+            logger.info("Ответ API получен")
             result: dict = response.json()
             result_exch: dict = result.get("rates", {})
             for k, v in result_exch.items():
@@ -102,7 +99,7 @@ def get_currency_rates(currency: list) -> list:
     return []
 
 
-def get_stock_prices(stocks: list, api_key: str = API_KEY_2) -> list| str| None:
+def get_stock_prices(stocks: list, api_key: str | None = API_KEY_2) -> list | str | None:
     """Возвращает стоимость запрошенных тикетов акций в рублях"""
     url = "https://www.alphavantage.co/query"
     stock_list = []
@@ -113,7 +110,7 @@ def get_stock_prices(stocks: list, api_key: str = API_KEY_2) -> list| str| None:
             response = requests.get(url, params=params, timeout=10)
 
             if response.status_code == 200:
-                logger.info(f"Ответ API получен")
+                logger.info("Ответ API получен")
                 data: dict = response.json()
 
                 if "Error Message" in data:
@@ -121,10 +118,7 @@ def get_stock_prices(stocks: list, api_key: str = API_KEY_2) -> list| str| None:
                     logger.info(f"Ошибка API: {data['Error Message']}")
                     return None
 
-                if (
-                    "Note" in data
-                    and "Thank you for using Alpha Vantage" in data["Note"]
-                ):
+                if "Note" in data and "Thank you for using Alpha Vantage" in data["Note"]:
                     print("Ошибка: достигнут лимит запросов к API (5/мин)")
                     logger.info("Ошибка: достигнут лимит запросов к API (5/мин)")
                     return None
@@ -144,7 +138,7 @@ def get_stock_prices(stocks: list, api_key: str = API_KEY_2) -> list| str| None:
                 print(f"Ошибка HTTP: статус {response.status_code}")
                 logger.info(f"Ошибка HTTP: статус {response.status_code}")
                 return None
-        except JSONDecodeError as ex:
+        except JSONDecodeError:
             logger.info("Ошибка: не удалось распарсить JSON. Ответ сервера:")
             print("Ошибка: не удалось распарсить JSON. Ответ сервера:")
             return None
@@ -165,7 +159,5 @@ def get_stock_prices(stocks: list, api_key: str = API_KEY_2) -> list| str| None:
 def data_time_range(date_start_range: str) -> tuple[datetime.datetime, datetime.datetime]:
     """Возвращает временной период транзакций"""
     end_of_time = datetime.datetime.strptime(date_start_range, "%Y-%m-%d %H:%M:%S")
-    start_of_time = datetime.datetime(
-        day=1, month=end_of_time.month, year=end_of_time.year
-    )
+    start_of_time = datetime.datetime(day=1, month=end_of_time.month, year=end_of_time.year)
     return start_of_time, end_of_time

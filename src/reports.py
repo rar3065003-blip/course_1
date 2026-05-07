@@ -1,18 +1,18 @@
 import functools
 import logging
 from collections.abc import Callable
-from datetime import datetime, time
-from typing import Optional, Any
+from datetime import datetime
+from typing import Any, Optional
+
 import pandas as pd
 from pandas import DateOffset
+
 from config import ROOT_DIR
 
 logger = logging.getLogger("reports")
 logger.setLevel(logging.INFO)
 file_handler = logging.FileHandler(f"{ROOT_DIR}/logs/reports.log", encoding="utf-8")
-file_formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s: %(message)s"
-)
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
@@ -35,9 +35,7 @@ def log(filename: Optional[str] = "default.log") -> Callable:
                 logger.info(result)
             finally:
                 logger.info(result)
-                with open(
-                    f"{ROOT_DIR}/data/{filename}", mode="a", encoding="utf-8"
-                ) as x:
+                with open(f"{ROOT_DIR}/data/{filename}", mode="a", encoding="utf-8") as x:
                     x.write(str(result) + "\n")
             return result
 
@@ -47,9 +45,7 @@ def log(filename: Optional[str] = "default.log") -> Callable:
 
 
 @log()
-def spending_by_category(
-    transactions: pd.DataFrame, category: str, date: Optional[str] = None
-) -> pd.DataFrame:
+def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
     """Принимает DataFrame, возвращает операции за последние 3 месяца в DataFrame"""
     if date is None:
         end_of_time = datetime.now()
@@ -58,9 +54,7 @@ def spending_by_category(
 
     start_time = end_of_time - DateOffset(months=3)
 
-    transactions["Дата операции"] = pd.to_datetime(
-        transactions["Дата операции"], dayfirst=True
-    )
+    transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], dayfirst=True)
     filter_transaction = transactions[
         (transactions["Дата операции"] >= start_time)
         & (transactions["Дата операции"] <= end_of_time)
